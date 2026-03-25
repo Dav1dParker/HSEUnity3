@@ -17,8 +17,11 @@ namespace _HSEHW3.Scripts
         [SerializeField] private float runSpeed = 4.5f;
         [SerializeField] private float turnSpeed = 720.0f;
 
+        [Header("Camera")]
+        [SerializeField] private bool lockCursor = true;
+
         [Header("Mode")]
-        [SerializeField] private bool useRootMotion = false;
+        [SerializeField] private bool useRootMotion;
 
         [Header("Animator Parameters")]
         [SerializeField] private float dampTime = 0.2f;
@@ -39,42 +42,76 @@ namespace _HSEHW3.Scripts
             EnableAction(rollAction);
             EnableAction(attackAction);
 
-            toggleRootMotionAction.action.performed += OnToggleRootMotionPerformed;
-            rollAction.action.performed += OnRollPerformed;
-            attackAction.action.performed += OnAttackPerformed;
+            if (toggleRootMotionAction != null && toggleRootMotionAction.action != null)
+            {
+                toggleRootMotionAction.action.performed += OnToggleRootMotionPerformed;
+            }
 
+            if (rollAction != null && rollAction.action != null)
+            {
+                rollAction.action.performed += OnRollPerformed;
+            }
+
+            if (attackAction != null && attackAction.action != null)
+            {
+                attackAction.action.performed += OnAttackPerformed;
+            }
 
             animator.applyRootMotion = useRootMotion;
+
+            if (lockCursor)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
         }
 
         private void OnDisable()
         {
+            if (toggleRootMotionAction != null && toggleRootMotionAction.action != null)
+            {
+                toggleRootMotionAction.action.performed -= OnToggleRootMotionPerformed;
+            }
 
-            toggleRootMotionAction.action.performed -= OnToggleRootMotionPerformed;
-            rollAction.action.performed -= OnRollPerformed;
-            attackAction.action.performed -= OnAttackPerformed;
+            if (rollAction != null && rollAction.action != null)
+            {
+                rollAction.action.performed -= OnRollPerformed;
+            }
 
+            if (attackAction != null && attackAction.action != null)
+            {
+                attackAction.action.performed -= OnAttackPerformed;
+            }
 
             DisableAction(moveAction);
             DisableAction(runAction);
             DisableAction(toggleRootMotionAction);
             DisableAction(rollAction);
             DisableAction(attackAction);
+
+            if (lockCursor && Cursor.lockState == CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
         }
 
         private void Update()
         {
+            UpdateMovement();
+        }
+
+        private void UpdateMovement()
+        {
             Vector2 moveInput = ReadMoveInput();
             bool running = IsRunPressed();
 
-            Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
-            input = Vector3.ClampMagnitude(input, 1f);
-
-            bool hasInput = input.sqrMagnitude > 0.0001f;
+            Vector3 moveDirection = GetMoveDirection(moveInput);
+            bool hasInput = moveDirection.sqrMagnitude > 0.0001f;
 
             if (hasInput)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(input, Vector3.up);
+                Quaternion targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
                 transform.rotation = Quaternion.RotateTowards(
                     transform.rotation,
                     targetRotation,
@@ -83,7 +120,6 @@ namespace _HSEHW3.Scripts
             }
 
             float targetSpeedParam = 0f;
-
             if (hasInput)
             {
                 targetSpeedParam = running ? 1f : 0.5f;
@@ -91,22 +127,44 @@ namespace _HSEHW3.Scripts
 
             animator.SetFloat(speedParameter, targetSpeedParam, dampTime, Time.deltaTime);
 
-            if (!useRootMotion)
+            if (!useRootMotion && hasInput)
             {
                 float moveSpeed = running ? runSpeed : walkSpeed;
-                transform.position += input * (moveSpeed * Time.deltaTime);
+                transform.position += moveDirection * (moveSpeed * Time.deltaTime);
             }
+        }
+
+        private Vector3 GetMoveDirection(Vector2 moveInput)
+        {
+            Camera activeCamera = Camera.main;
+            Transform movementReference = activeCamera != null ? activeCamera.transform : transform;
+
+            Vector3 forward = movementReference != null ? movementReference.forward : transform.forward;
+            Vector3 right = movementReference != null ? movementReference.right : transform.right;
+
+            forward.y = 0f;
+            right.y = 0f;
+
+            forward.Normalize();
+            right.Normalize();
+
+            Vector3 moveDirection = forward * moveInput.y + right * moveInput.x;
+            return Vector3.ClampMagnitude(moveDirection, 1f);
         }
 
         private Vector2 ReadMoveInput()
         {
+            if (moveAction == null || moveAction.action == null)
+            {
+                return Vector2.zero;
+            }
 
             return moveAction.action.ReadValue<Vector2>();
         }
 
         private bool IsRunPressed()
         {
-            if (!runAction || runAction.action == null)
+            if (runAction == null || runAction.action == null)
             {
                 return false;
             }
