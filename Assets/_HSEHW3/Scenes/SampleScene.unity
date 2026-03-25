@@ -6247,7 +6247,7 @@ MonoBehaviour:
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 1
-  m_Antialiasing: 0
+  m_Antialiasing: 3
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
@@ -6260,8 +6260,8 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_TaaSettings:
-    m_Quality: 3
-    m_FrameInfluence: 0.1
+    m_Quality: 2
+    m_FrameInfluence: 0.100000024
     m_JitterScale: 1
     m_MipBias: 0
     m_VarianceClampScale: 0.9
@@ -19052,6 +19052,10 @@ PrefabInstance:
       value: NinjaGame
       objectReference: {fileID: 0}
     - target: {fileID: 8823228207642268116, guid: 4982fb6307b744b4a93d6b3b3b0ff6f8, type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
+    - target: {fileID: 8823228207642268116, guid: 4982fb6307b744b4a93d6b3b3b0ff6f8, type: 3}
       propertyPath: m_IsKinematic
       value: 0
       objectReference: {fileID: 0}
@@ -19257,8 +19261,8 @@ SceneRoots:
   - {fileID: 1740586582}
   - {fileID: 1533445419}
   - {fileID: 796401196}
-  - {fileID: 2134822754}
   - {fileID: 1253077297}
+  - {fileID: 2134822754}
   - {fileID: 1192003712}
   - {fileID: 2065926653}
   - {fileID: 84348866}

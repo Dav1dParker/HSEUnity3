@@ -30,7 +30,6 @@ namespace _HSEHW3.Scripts.Player
 
             playerController.enabled = false;
 
-            targetRigidbody.isKinematic = false;
             targetRigidbody.useGravity = true;
             targetRigidbody.constraints = RigidbodyConstraints.None;
             targetRigidbody.AddTorque(GetRandomTorqueImpulse(), ForceMode.Impulse);

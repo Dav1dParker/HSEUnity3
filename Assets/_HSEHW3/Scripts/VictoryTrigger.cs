@@ -29,7 +29,7 @@ namespace _HSEHW3.Scripts
             }
         }
 
-        private static void QuitGame()
+        private void QuitGame()
         {
             Application.Quit();
         }

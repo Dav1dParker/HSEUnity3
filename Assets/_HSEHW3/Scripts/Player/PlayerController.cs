@@ -115,6 +115,9 @@ namespace _HSEHW3.Scripts.Player
 
         private void ApplyMovement()
         {
+            Vector3 currentVelocity = targetRigidbody.linearVelocity;
+            Vector3 horizontalVelocity = Vector3.zero;
+
             if (hasMoveInput)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(desiredMoveDirection, Vector3.up);
@@ -129,9 +132,14 @@ namespace _HSEHW3.Scripts.Player
             if (!useRootMotion && hasMoveInput)
             {
                 float moveSpeed = isRunning ? runSpeed : walkSpeed;
-                Vector3 nextPosition = targetRigidbody.position + desiredMoveDirection * (moveSpeed * Time.fixedDeltaTime);
-                targetRigidbody.MovePosition(nextPosition);
+                horizontalVelocity = desiredMoveDirection * moveSpeed;
             }
+
+            targetRigidbody.linearVelocity = new Vector3(
+                horizontalVelocity.x,
+                currentVelocity.y,
+                horizontalVelocity.z
+            );
         }
 
         private Vector3 GetMoveDirection(Vector2 moveInput)
