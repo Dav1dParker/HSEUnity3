@@ -32,6 +32,11 @@ namespace _HSEHW3.Scripts
         [Header("References")]
         [SerializeField] private Animator animator;
         [SerializeField] private InteractionSensor interactionSensor;
+        [SerializeField] private Rigidbody targetRigidbody;
+
+        private Vector3 desiredMoveDirection;
+        private bool hasMoveInput;
+        private bool isRunning;
 
         private void OnEnable()
         {
@@ -109,39 +114,58 @@ namespace _HSEHW3.Scripts
 
         private void Update()
         {
-            UpdateMovement();
+            UpdateInput();
+            UpdateAnimator();
         }
 
-        private void UpdateMovement()
+        private void FixedUpdate()
+        {
+            ApplyMovement();
+        }
+
+        private void UpdateInput()
         {
             Vector2 moveInput = ReadMoveInput();
-            bool running = IsRunPressed();
+            isRunning = IsRunPressed();
 
-            Vector3 moveDirection = GetMoveDirection(moveInput);
-            bool hasInput = moveDirection.sqrMagnitude > 0.0001f;
+            desiredMoveDirection = GetMoveDirection(moveInput);
+            hasMoveInput = desiredMoveDirection.sqrMagnitude > 0.0001f;
+        }
 
-            if (hasInput)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(moveDirection, Vector3.up);
-                transform.rotation = Quaternion.RotateTowards(
-                    transform.rotation,
-                    targetRotation,
-                    turnSpeed * Time.deltaTime
-                );
-            }
-
+        private void UpdateAnimator()
+        {
             float targetSpeedParam = 0f;
-            if (hasInput)
+            if (hasMoveInput)
             {
-                targetSpeedParam = running ? 1f : 0.5f;
+                targetSpeedParam = isRunning ? 1f : 0.5f;
             }
 
             animator.SetFloat(speedParameter, targetSpeedParam, dampTime, Time.deltaTime);
+        }
 
-            if (!useRootMotion && hasInput)
+        private void ApplyMovement()
+        {
+            if (targetRigidbody == null)
             {
-                float moveSpeed = running ? runSpeed : walkSpeed;
-                transform.position += moveDirection * (moveSpeed * Time.deltaTime);
+                return;
+            }
+
+            if (hasMoveInput)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(desiredMoveDirection, Vector3.up);
+                Quaternion nextRotation = Quaternion.RotateTowards(
+                    targetRigidbody.rotation,
+                    targetRotation,
+                    turnSpeed * Time.fixedDeltaTime
+                );
+                targetRigidbody.MoveRotation(nextRotation);
+            }
+
+            if (!useRootMotion && hasMoveInput)
+            {
+                float moveSpeed = isRunning ? runSpeed : walkSpeed;
+                Vector3 nextPosition = targetRigidbody.position + desiredMoveDirection * (moveSpeed * Time.fixedDeltaTime);
+                targetRigidbody.MovePosition(nextPosition);
             }
         }
 

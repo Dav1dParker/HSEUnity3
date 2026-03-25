@@ -4,6 +4,7 @@ namespace _HSEHW3.Scripts
 {
     public class TrapFloor : MonoBehaviour
     {
+        [SerializeField] private bool isTrap = true;
         [SerializeField] private DoorController targetDoor;
         [SerializeField] private Collider[] collidersToDisable;
         [SerializeField] private Renderer[] renderersToDisable;
@@ -22,12 +23,16 @@ namespace _HSEHW3.Scripts
             if (targetDoor != null)
             {
                 targetDoor.Close();
+                targetDoor.enabled = false;
             }
 
-            FunnyFall funnyFall = other.GetComponentInParent<FunnyFall>();
-            if (funnyFall != null)
+            if (isTrap)
             {
-                funnyFall.ActivateFall();
+                FunnyFall funnyFall = other.GetComponentInParent<FunnyFall>();
+                if (funnyFall != null)
+                {
+                    funnyFall.ActivateFall();
+                }
             }
 
             for (int i = 0; i < collidersToDisable.Length; i++)
