@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace _HSEHW3.Scripts
+namespace _HSEHW3.Scripts.Player
 {
     public class FunnyFall : MonoBehaviour
     {
@@ -24,25 +24,16 @@ namespace _HSEHW3.Scripts
 
             hasActivated = true;
 
-            if (animator != null)
-            {
-                animator.Rebind();
-                animator.Update(0f);
-                animator.enabled = false;
-            }
+            animator.Rebind();
+            animator.Update(0f);
+            animator.enabled = false;
 
-            if (playerController != null)
-            {
-                playerController.enabled = false;
-            }
+            playerController.enabled = false;
 
-            if (targetRigidbody != null)
-            {
-                targetRigidbody.isKinematic = false;
-                targetRigidbody.useGravity = true;
-                targetRigidbody.constraints = RigidbodyConstraints.None;
-                targetRigidbody.AddTorque(GetRandomTorqueImpulse(), ForceMode.Impulse);
-            }
+            targetRigidbody.isKinematic = false;
+            targetRigidbody.useGravity = true;
+            targetRigidbody.constraints = RigidbodyConstraints.None;
+            targetRigidbody.AddTorque(GetRandomTorqueImpulse(), ForceMode.Impulse);
 
             if (restartDelay >= 0f)
             {

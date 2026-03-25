@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using _HSEHW3.Scripts.Interactable;
 using UnityEngine;
 
-namespace _HSEHW3.Scripts
+namespace _HSEHW3.Scripts.Player
 {
     [RequireComponent(typeof(Collider))]
     public class InteractionSensor : MonoBehaviour

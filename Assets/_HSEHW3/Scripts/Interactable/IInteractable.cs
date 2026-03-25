@@ -1,4 +1,4 @@
-namespace _HSEHW3.Scripts
+namespace _HSEHW3.Scripts.Interactable
 {
     public interface IInteractable
     {

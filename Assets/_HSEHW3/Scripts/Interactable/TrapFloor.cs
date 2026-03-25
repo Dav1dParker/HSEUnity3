@@ -1,6 +1,7 @@
+using _HSEHW3.Scripts.Player;
 using UnityEngine;
 
-namespace _HSEHW3.Scripts
+namespace _HSEHW3.Scripts.Interactable
 {
     public class TrapFloor : MonoBehaviour
     {
@@ -20,11 +21,8 @@ namespace _HSEHW3.Scripts
 
             hasTriggered = true;
 
-            if (targetDoor != null)
-            {
-                targetDoor.Close();
-                targetDoor.enabled = false;
-            }
+            targetDoor.Close();
+            targetDoor.enabled = false;
 
             if (isTrap)
             {
@@ -37,18 +35,12 @@ namespace _HSEHW3.Scripts
 
             for (int i = 0; i < collidersToDisable.Length; i++)
             {
-                if (collidersToDisable[i] != null)
-                {
-                    collidersToDisable[i].enabled = false;
-                }
+                collidersToDisable[i].enabled = false;
             }
 
             for (int i = 0; i < renderersToDisable.Length; i++)
             {
-                if (renderersToDisable[i] != null)
-                {
-                    renderersToDisable[i].enabled = false;
-                }
+                renderersToDisable[i].enabled = false;
             }
         }
     }

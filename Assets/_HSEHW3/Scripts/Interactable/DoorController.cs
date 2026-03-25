@@ -1,12 +1,12 @@
 using UnityEngine;
 
-namespace _HSEHW3.Scripts
+namespace _HSEHW3.Scripts.Interactable
 {
     public class DoorController : MonoBehaviour, IInteractable
     {
         [SerializeField] private Animator animator;
         [SerializeField] private Collider blockingCollider;
-        [SerializeField] private string promptText = "Press E";
+        [SerializeField] private string promptText = "E";
         [SerializeField] private string openParameter = "IsOpen";
         [SerializeField] private bool startsOpen;
         [SerializeField] private bool disableColliderWhenOpen;
@@ -51,16 +51,13 @@ namespace _HSEHW3.Scripts
         {
             isOpen = value;
 
-            if (animator != null && !string.IsNullOrWhiteSpace(openParameter))
+            animator.SetBool(openParameter, isOpen);
+            if (instant)
             {
-                animator.SetBool(openParameter, isOpen);
-                if (instant)
-                {
-                    animator.Update(0f);
-                }
+                animator.Update(0f);
             }
 
-            if (blockingCollider != null && disableColliderWhenOpen)
+            if (disableColliderWhenOpen)
             {
                 blockingCollider.enabled = !isOpen;
             }

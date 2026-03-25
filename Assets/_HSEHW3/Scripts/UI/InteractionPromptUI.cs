@@ -1,7 +1,9 @@
+using _HSEHW3.Scripts.Interactable;
+using _HSEHW3.Scripts.Player;
 using TMPro;
 using UnityEngine;
 
-namespace _HSEHW3.Scripts
+namespace _HSEHW3.Scripts.UI
 {
     public class InteractionPromptUI : MonoBehaviour
     {
@@ -15,20 +17,13 @@ namespace _HSEHW3.Scripts
 
         private void OnEnable()
         {
-            if (interactionSensor != null)
-            {
-                interactionSensor.CurrentInteractableChanged += OnCurrentInteractableChanged;
-            }
-
+            interactionSensor.CurrentInteractableChanged += OnCurrentInteractableChanged;
             RefreshPrompt();
         }
 
         private void OnDisable()
         {
-            if (interactionSensor != null)
-            {
-                interactionSensor.CurrentInteractableChanged -= OnCurrentInteractableChanged;
-            }
+            interactionSensor.CurrentInteractableChanged -= OnCurrentInteractableChanged;
         }
 
         private void OnCurrentInteractableChanged(IInteractable interactable)
@@ -38,12 +33,7 @@ namespace _HSEHW3.Scripts
 
         private void RefreshPrompt()
         {
-            if (promptLabel == null)
-            {
-                return;
-            }
-
-            IInteractable interactable = interactionSensor != null ? interactionSensor.CurrentInteractable : null;
+            IInteractable interactable = interactionSensor.CurrentInteractable;
             bool shouldShow = interactable != null && interactable.CanInteract;
 
             promptLabel.text = shouldShow ? interactable.PromptText : string.Empty;

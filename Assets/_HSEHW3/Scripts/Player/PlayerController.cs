@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace _HSEHW3.Scripts
+namespace _HSEHW3.Scripts.Player
 {
     public class PlayerController : MonoBehaviour
     {
@@ -47,25 +47,10 @@ namespace _HSEHW3.Scripts
             EnableAction(rollAction);
             EnableAction(attackAction);
 
-            if (interactAction != null && interactAction.action != null)
-            {
-                interactAction.action.performed += OnInteractPerformed;
-            }
-
-            if (toggleRootMotionAction != null && toggleRootMotionAction.action != null)
-            {
-                toggleRootMotionAction.action.performed += OnToggleRootMotionPerformed;
-            }
-
-            if (rollAction != null && rollAction.action != null)
-            {
-                rollAction.action.performed += OnRollPerformed;
-            }
-
-            if (attackAction != null && attackAction.action != null)
-            {
-                attackAction.action.performed += OnAttackPerformed;
-            }
+            interactAction.action.performed += OnInteractPerformed;
+            toggleRootMotionAction.action.performed += OnToggleRootMotionPerformed;
+            rollAction.action.performed += OnRollPerformed;
+            attackAction.action.performed += OnAttackPerformed;
 
             animator.applyRootMotion = useRootMotion;
 
@@ -78,25 +63,10 @@ namespace _HSEHW3.Scripts
 
         private void OnDisable()
         {
-            if (interactAction != null && interactAction.action != null)
-            {
-                interactAction.action.performed -= OnInteractPerformed;
-            }
-
-            if (toggleRootMotionAction != null && toggleRootMotionAction.action != null)
-            {
-                toggleRootMotionAction.action.performed -= OnToggleRootMotionPerformed;
-            }
-
-            if (rollAction != null && rollAction.action != null)
-            {
-                rollAction.action.performed -= OnRollPerformed;
-            }
-
-            if (attackAction != null && attackAction.action != null)
-            {
-                attackAction.action.performed -= OnAttackPerformed;
-            }
+            interactAction.action.performed -= OnInteractPerformed;
+            toggleRootMotionAction.action.performed -= OnToggleRootMotionPerformed;
+            rollAction.action.performed -= OnRollPerformed;
+            attackAction.action.performed -= OnAttackPerformed;
 
             DisableAction(moveAction);
             DisableAction(interactAction);
@@ -145,11 +115,6 @@ namespace _HSEHW3.Scripts
 
         private void ApplyMovement()
         {
-            if (targetRigidbody == null)
-            {
-                return;
-            }
-
             if (hasMoveInput)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(desiredMoveDirection, Vector3.up);
@@ -171,10 +136,10 @@ namespace _HSEHW3.Scripts
 
         private Vector3 GetMoveDirection(Vector2 moveInput)
         {
-            Transform movementReference = cameraTransform != null ? cameraTransform : transform;
+            Transform movementReference = cameraTransform ? cameraTransform : transform;
 
-            Vector3 forward = movementReference != null ? movementReference.forward : transform.forward;
-            Vector3 right = movementReference != null ? movementReference.right : transform.right;
+            Vector3 forward = movementReference ? movementReference.forward : transform.forward;
+            Vector3 right = movementReference ? movementReference.right : transform.right;
 
             forward.y = 0f;
             right.y = 0f;
@@ -188,31 +153,16 @@ namespace _HSEHW3.Scripts
 
         private Vector2 ReadMoveInput()
         {
-            if (moveAction == null || moveAction.action == null)
-            {
-                return Vector2.zero;
-            }
-
             return moveAction.action.ReadValue<Vector2>();
         }
 
         private bool IsRunPressed()
         {
-            if (runAction == null || runAction.action == null)
-            {
-                return false;
-            }
-
             return runAction.action.IsPressed();
         }
 
         private void OnInteractPerformed(InputAction.CallbackContext context)
         {
-            if (interactionSensor == null)
-            {
-                return;
-            }
-
             interactionSensor.TryInteractCurrent();
         }
 
@@ -234,18 +184,12 @@ namespace _HSEHW3.Scripts
 
         private static void EnableAction(InputActionReference actionReference)
         {
-            if (actionReference != null && actionReference.action != null)
-            {
-                actionReference.action.Enable();
-            }
+            actionReference.action.Enable();
         }
 
         private static void DisableAction(InputActionReference actionReference)
         {
-            if (actionReference != null && actionReference.action != null)
-            {
-                actionReference.action.Disable();
-            }
+            actionReference.action.Disable();
         }
     }
 }
