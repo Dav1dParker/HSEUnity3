@@ -7,6 +7,7 @@ namespace _HSEHW3.Scripts
     {
         [Header("Input")]
         [SerializeField] private InputActionReference moveAction;
+        [SerializeField] private InputActionReference interactAction;
         [SerializeField] private InputActionReference runAction;
         [SerializeField] private InputActionReference toggleRootMotionAction;
         [SerializeField] private InputActionReference rollAction;
@@ -18,6 +19,7 @@ namespace _HSEHW3.Scripts
         [SerializeField] private float turnSpeed = 720.0f;
 
         [Header("Camera")]
+        [SerializeField] private Transform cameraTransform;
         [SerializeField] private bool lockCursor = true;
 
         [Header("Mode")]
@@ -27,20 +29,23 @@ namespace _HSEHW3.Scripts
         [SerializeField] private float dampTime = 0.2f;
         [SerializeField] private string speedParameter = "Speed";
 
-        private Animator animator;
-
-        private void Awake()
-        {
-            animator = GetComponent<Animator>();
-        }
+        [Header("References")]
+        [SerializeField] private Animator animator;
+        [SerializeField] private InteractionSensor interactionSensor;
 
         private void OnEnable()
         {
             EnableAction(moveAction);
+            EnableAction(interactAction);
             EnableAction(runAction);
             EnableAction(toggleRootMotionAction);
             EnableAction(rollAction);
             EnableAction(attackAction);
+
+            if (interactAction != null && interactAction.action != null)
+            {
+                interactAction.action.performed += OnInteractPerformed;
+            }
 
             if (toggleRootMotionAction != null && toggleRootMotionAction.action != null)
             {
@@ -68,6 +73,11 @@ namespace _HSEHW3.Scripts
 
         private void OnDisable()
         {
+            if (interactAction != null && interactAction.action != null)
+            {
+                interactAction.action.performed -= OnInteractPerformed;
+            }
+
             if (toggleRootMotionAction != null && toggleRootMotionAction.action != null)
             {
                 toggleRootMotionAction.action.performed -= OnToggleRootMotionPerformed;
@@ -84,6 +94,7 @@ namespace _HSEHW3.Scripts
             }
 
             DisableAction(moveAction);
+            DisableAction(interactAction);
             DisableAction(runAction);
             DisableAction(toggleRootMotionAction);
             DisableAction(rollAction);
@@ -136,8 +147,7 @@ namespace _HSEHW3.Scripts
 
         private Vector3 GetMoveDirection(Vector2 moveInput)
         {
-            Camera activeCamera = Camera.main;
-            Transform movementReference = activeCamera != null ? activeCamera.transform : transform;
+            Transform movementReference = cameraTransform != null ? cameraTransform : transform;
 
             Vector3 forward = movementReference != null ? movementReference.forward : transform.forward;
             Vector3 right = movementReference != null ? movementReference.right : transform.right;
@@ -170,6 +180,16 @@ namespace _HSEHW3.Scripts
             }
 
             return runAction.action.IsPressed();
+        }
+
+        private void OnInteractPerformed(InputAction.CallbackContext context)
+        {
+            if (interactionSensor == null)
+            {
+                return;
+            }
+
+            interactionSensor.TryInteractCurrent();
         }
 
         private void OnToggleRootMotionPerformed(InputAction.CallbackContext context)

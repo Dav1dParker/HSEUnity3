@@ -20,7 +20,8 @@ namespace _HSEExam.Scripts
         [Header("Mode")]
         [SerializeField] private bool useRootMotion = false;
 
-        private Animator _animator;
+        [Header("References")]
+        [SerializeField] private Animator animator;
 
         private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
         private static readonly int IsRunningHash = Animator.StringToHash("IsRunning");
@@ -29,7 +30,7 @@ namespace _HSEExam.Scripts
 
         private void Awake()
         {
-            _animator = GetComponent<Animator>();
+            animator.applyRootMotion = useRootMotion;
         }
 
         private void OnEnable()
@@ -49,7 +50,7 @@ namespace _HSEExam.Scripts
             if (attackAction != null && attackAction.action != null)
                 attackAction.action.performed += OnAttackPerformed;
 
-            _animator.applyRootMotion = useRootMotion;
+            animator.applyRootMotion = useRootMotion;
         }
 
         private void OnDisable()
@@ -90,8 +91,8 @@ namespace _HSEExam.Scripts
                 );
             }
 
-            _animator.SetBool(IsMovingHash, hasInput);
-            _animator.SetBool(IsRunningHash, hasInput && running);
+            animator.SetBool(IsMovingHash, hasInput);
+            animator.SetBool(IsRunningHash, hasInput && running);
 
             if (!useRootMotion)
             {
@@ -119,17 +120,17 @@ namespace _HSEExam.Scripts
         private void OnToggleRootMotionPerformed(InputAction.CallbackContext context)
         {
             useRootMotion = !useRootMotion;
-            _animator.applyRootMotion = useRootMotion;
+            animator.applyRootMotion = useRootMotion;
         }
 
         private void OnRollPerformed(InputAction.CallbackContext context)
         {
-            _animator.SetTrigger(RollHash);
+            animator.SetTrigger(RollHash);
         }
 
         private void OnAttackPerformed(InputAction.CallbackContext context)
         {
-            _animator.SetTrigger(AttackHash);
+            animator.SetTrigger(AttackHash);
         }
 
         private static void EnableAction(InputActionReference actionReference)
