@@ -10,16 +10,16 @@ namespace _HSEHW3.Scripts.Interactable
         [SerializeField] private Collider[] collidersToDisable;
         [SerializeField] private Renderer[] renderersToDisable;
 
-        private bool hasTriggered;
+        private bool _hasTriggered;
 
         private void OnTriggerEnter(Collider other)
         {
-            if (hasTriggered || !other.CompareTag("Player"))
+            if (_hasTriggered || !other.CompareTag("Player"))
             {
                 return;
             }
 
-            hasTriggered = true;
+            _hasTriggered = true;
 
             targetDoor.Close();
             targetDoor.enabled = false;

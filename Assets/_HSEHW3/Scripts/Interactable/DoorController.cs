@@ -7,18 +7,20 @@ namespace _HSEHW3.Scripts.Interactable
         [SerializeField] private Animator animator;
         [SerializeField] private Collider blockingCollider;
         [SerializeField] private string promptText = "E";
-        [SerializeField] private string openParameter = "IsOpen";
+        [SerializeField] private string openTrigger = "Open";
+        [SerializeField] private string closeTrigger = "Close";
         [SerializeField] private bool startsOpen;
         [SerializeField] private bool disableColliderWhenOpen;
 
-        private bool isOpen;
+        private bool _isOpen;
 
         public string PromptText => promptText;
         public bool CanInteract => enabled && gameObject.activeInHierarchy;
-        public bool IsOpen => isOpen;
+        public bool IsOpen => _isOpen;
 
         private void Awake()
         {
+            _isOpen = !startsOpen;
             SetOpen(startsOpen, true);
         }
 
@@ -29,7 +31,7 @@ namespace _HSEHW3.Scripts.Interactable
 
         public void Toggle()
         {
-            SetOpen(!isOpen);
+            SetOpen(!_isOpen);
         }
 
         public void Close()
@@ -49,17 +51,28 @@ namespace _HSEHW3.Scripts.Interactable
 
         private void SetOpen(bool value, bool instant)
         {
-            isOpen = value;
+            if (_isOpen == value)
+            {
+                return;
+            }
 
-            animator.SetBool(openParameter, isOpen);
+            _isOpen = value;
+
             if (instant)
             {
+                animator.Play(_isOpen ? "OpenIdle" : "ClosedIdle", 0, 0f);
                 animator.Update(0f);
+            }
+            else
+            {
+                animator.ResetTrigger(openTrigger);
+                animator.ResetTrigger(closeTrigger);
+                animator.SetTrigger(_isOpen ? openTrigger : closeTrigger);
             }
 
             if (disableColliderWhenOpen)
             {
-                blockingCollider.enabled = !isOpen;
+                blockingCollider.enabled = !_isOpen;
             }
         }
     }

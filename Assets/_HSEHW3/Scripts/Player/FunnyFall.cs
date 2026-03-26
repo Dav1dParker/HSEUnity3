@@ -13,16 +13,16 @@ namespace _HSEHW3.Scripts.Player
         [SerializeField] private PlayerController playerController;
         [SerializeField] private float restartDelay = 2f;
 
-        private bool hasActivated;
+        private bool _hasActivated;
 
         public void ActivateFall()
         {
-            if (hasActivated)
+            if (_hasActivated)
             {
                 return;
             }
 
-            hasActivated = true;
+            _hasActivated = true;
 
             animator.Rebind();
             animator.Update(0f);

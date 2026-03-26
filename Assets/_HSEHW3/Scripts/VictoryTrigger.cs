@@ -7,16 +7,16 @@ namespace _HSEHW3.Scripts
         [SerializeField] private ParticleSystem[] particleSystems = new ParticleSystem[3];
         [SerializeField] private float quitDelay = 5f;
 
-        private bool hasTriggered;
+        private bool _hasTriggered;
 
         private void OnTriggerEnter(Collider other)
         {
-            if (hasTriggered || !other.CompareTag("Player"))
+            if (_hasTriggered || !other.CompareTag("Player"))
             {
                 return;
             }
 
-            hasTriggered = true;
+            _hasTriggered = true;
 
             for (int i = 0; i < particleSystems.Length; i++)
             {

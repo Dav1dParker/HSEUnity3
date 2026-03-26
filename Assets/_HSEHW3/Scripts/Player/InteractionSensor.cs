@@ -12,17 +12,17 @@ namespace _HSEHW3.Scripts.Player
 
         public IInteractable CurrentInteractable { get; private set; }
 
-        private readonly List<IInteractable> interactables = new List<IInteractable>();
+        private readonly List<IInteractable> _interactables = new List<IInteractable>();
 
         private void OnTriggerEnter(Collider other)
         {
             IInteractable interactable = FindInteractable(other);
-            if (interactable == null || interactables.Contains(interactable))
+            if (interactable == null || _interactables.Contains(interactable))
             {
                 return;
             }
 
-            interactables.Add(interactable);
+            _interactables.Add(interactable);
             RefreshCurrentInteractable();
         }
 
@@ -34,7 +34,7 @@ namespace _HSEHW3.Scripts.Player
                 return;
             }
 
-            if (interactables.Remove(interactable))
+            if (_interactables.Remove(interactable))
             {
                 RefreshCurrentInteractable();
             }
@@ -55,12 +55,12 @@ namespace _HSEHW3.Scripts.Player
 
         private void RefreshCurrentInteractable()
         {
-            interactables.RemoveAll(item => item == null);
+            _interactables.RemoveAll(item => item == null);
 
             IInteractable nextInteractable = null;
             float bestDistance = float.MaxValue;
 
-            foreach (IInteractable interactable in interactables)
+            foreach (IInteractable interactable in _interactables)
             {
                 if (interactable == null || !interactable.CanInteract)
                 {
